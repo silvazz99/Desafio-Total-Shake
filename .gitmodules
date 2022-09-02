@@ -1,0 +1,3 @@
+[submodule "payments-api-shake"]
+	path = payments-api-shake
+	url = https://github.com/silvazz99/payments-api-shake
