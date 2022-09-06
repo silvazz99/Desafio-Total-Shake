@@ -9,12 +9,12 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.desafio</groupId>
-	<artifactId>totalshake</artifactId>
+	<artifactId>TotalShake-Request</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>totalshake</name>
+	<name>TotalShake-Requests</name>
 	<description>totalshake</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>18</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
