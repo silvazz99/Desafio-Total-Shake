@@ -48,7 +48,7 @@ services:
 
   totalShake-requests:
     image: app-totalrequests
-    container_name: app-totalshake
+#    container_name: app-totalshake
     networks:
       - spring-mysql
     depends_on:
@@ -58,7 +58,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080-8081:8080"
     environment:
       USER_DB: root
       PASSWORD_DB: root
