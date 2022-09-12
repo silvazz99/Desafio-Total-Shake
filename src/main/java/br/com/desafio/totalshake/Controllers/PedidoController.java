@@ -37,20 +37,8 @@ public class PedidoController {
 
     @PostMapping(consumes = "application/json")
     public void addPedido(@RequestBody PedidoRequest pedidoRequest) {
-
-        Status status = Status.valueOf(pedidoRequest.getStatus());
-        LocalDateTime localDateTime = LocalDateTime.parse(pedidoRequest.getDateTime());
-        List<ItemPedidoRequest> itemPedidoRequests = pedidoRequest.getItens();
-
-        Pedido pedido = new Pedido(localDateTime, status, Collections.emptyList());
-
-        ItemPedidoRequest.setPedido(pedido);
-        List<ItemPedido> itemPedidos = itemPedidoRequests.stream().map(item -> item.toItemPedido(item)).toList();
-
-        pedido.setItemPedidoList(itemPedidos);
-
+        Pedido pedido = pedidoRequest.toPedido();
         pedidoService.savePedido(pedido);
-
     }
 
     @PutMapping(consumes = "application/json")
@@ -61,9 +49,9 @@ public class PedidoController {
         if(!pedidoToUpdate.isEmpty()) {
             pedidoToUpdate.get().updatePedido(pedido);
             pedidoService.savePedido(pedidoToUpdate.get());
+            return ResponseEntity.ok().body(new PedidoResponse(pedidoToUpdate.get()));
         }
-
-        return ResponseEntity.ok().body(new PedidoResponse(pedidoToUpdate.get()));
+        return null;
     }
 
     @PutMapping(path = "/pay")

@@ -1,5 +1,7 @@
 package br.com.desafio.totalshake.DTO;
 
+import br.com.desafio.totalshake.Entities.Pedido;
+
 import java.util.List;
 
 public class PedidoRequest {
@@ -38,5 +40,9 @@ public class PedidoRequest {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Pedido toPedido() {
+        return new Pedido(this.dateTime, this.status, this.itens);
     }
 }

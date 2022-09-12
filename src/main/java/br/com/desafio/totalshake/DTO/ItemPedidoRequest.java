@@ -11,6 +11,15 @@ public class ItemPedidoRequest {
 
     private static Pedido pedido;
 
+    public ItemPedidoRequest(Long id, int quantidade, String descricao, Long idPedido) {
+        this.id = id;
+        this.quantidade = quantidade;
+        this.descricao = descricao;
+        this.idPedido = idPedido;
+    }
+
+    public ItemPedidoRequest() {}
+
     public Long getIdPedido() {
         return idPedido;
     }

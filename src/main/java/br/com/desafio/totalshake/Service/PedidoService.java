@@ -17,20 +17,21 @@ public class PedidoService {
         return pedidoRepository.findById(id);
     }
 
-    public void savePedido(Pedido pedido) {
-        pedidoRepository.save(pedido);
+    public Pedido savePedido(Pedido pedido) {
+        return pedidoRepository.save(pedido);
     }
 
     public void deletePedido(Long id) {
         pedidoRepository.deleteById(id);
     }
 
-    public void payPedido(Long id, Status status) {
+    public Pedido payPedido(Long id, Status status) {
         Optional<Pedido> pedido = pedidoRepository.findById(id);
         if(pedido.isPresent()){
             Pedido pedidoInstance = pedido.get();
             pedidoInstance.setStatus(status);
-            pedidoRepository.save(pedidoInstance);
+            return pedidoRepository.save(pedidoInstance);
         }
+        return null;
     }
 }
