@@ -1,0 +1,109 @@
+services:
+
+  discovery-server:
+    image: app-totaldiscovery
+    container_name: app-totaldiscovery
+    networks:
+      - spring-mysql
+      - payments-mysql
+    depends_on:
+      mysqldb-requests:
+        condition: service_healthy
+    build:
+      context: ./discovery-server-shake
+      dockerfile: Dockerfile
+    ports:
+      - "8010:8010"
+
+  app-apigateway:
+    image: app-apigateway
+    container_name: app-totalgateway
+    depends_on:
+      - "discovery-server"
+    networks:
+      - payments-mysql
+      - spring-mysql
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8022:8022"
+
+  payments-api:
+    image: app-apipayments
+    container_name: payments-api
+    networks:
+      - payments-mysql
+    depends_on:
+      mysqldb-payments:
+        condition: service_healthy
+    build:
+      context: payments-api-shake
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      USER_DB: root
+      PASSWORD_DB: root
+
+  totalShake-requests:
+    image: app-totalrequests
+#    container_name: app-totalshake
+    networks:
+      - spring-mysql
+    depends_on:
+      mysqldb-requests:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080-8081:8080"
+    environment:
+      USER_DB: root
+      PASSWORD_DB: root
+
+
+  mysqldb-requests:
+    image: mysql:8.0.30
+    networks:
+      - spring-mysql
+    container_name: mysqldb-requests
+    ports:
+      - "33061:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_bkp_requests:/var/lib/mysql
+
+  mysqldb-payments:
+    image: mysql:8.0.30
+    networks:
+      - payments-mysql
+    container_name: mysqldb-payments
+    ports:
+      - "33062:3307"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_bkp_payments:/var/lib/mysql
+networks:
+  spring-mysql:
+  payments-mysql:
+volumes:
+  mysql_bkp_requests:
+  mysql_bkp_payments:

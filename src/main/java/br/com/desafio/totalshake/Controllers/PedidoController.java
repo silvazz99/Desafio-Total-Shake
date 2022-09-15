@@ -1,12 +1,13 @@
 package br.com.desafio.totalshake.Controllers;
 
 import br.com.desafio.totalshake.DTO.ItemPedidoRequest;
+import br.com.desafio.totalshake.DTO.PaymentRequest;
 import br.com.desafio.totalshake.DTO.PedidoRequest;
 import br.com.desafio.totalshake.DTO.PedidoResponse;
 import br.com.desafio.totalshake.Entities.ItemPedido;
 import br.com.desafio.totalshake.Entities.Pedido;
 import br.com.desafio.totalshake.Entities.Status;
-import br.com.desafio.totalshake.Repositories.PedidoRepository;
+import br.com.desafio.totalshake.Service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,15 @@ import java.util.Optional;
 
 
 @RestController
+@RequestMapping(path = "/pedido")
 public class PedidoController {
     @Autowired
-    private PedidoRepository pedidoRepository;
+    private PedidoService pedidoService;
 
-    @GetMapping(path = "/pedido")
+    @GetMapping
     @ResponseBody
     public PedidoResponse getPedido(@RequestParam Long id) {
-        Optional<Pedido> pedido = pedidoRepository.findById(id);
+        Optional<Pedido> pedido = pedidoService.getPedido(id);
         if(!pedido.isEmpty()) {
             return new PedidoResponse(pedido.get());
         } else {
@@ -33,40 +35,34 @@ public class PedidoController {
         }
     }
 
-    @PostMapping(path = "/pedido/", consumes = "application/json")
+    @PostMapping(consumes = "application/json")
     public void addPedido(@RequestBody PedidoRequest pedidoRequest) {
-
-        Status status = Status.valueOf(pedidoRequest.getStatus());
-        LocalDateTime localDateTime = LocalDateTime.parse(pedidoRequest.getDateTime());
-        List<ItemPedidoRequest> itemPedidoRequests = pedidoRequest.getItens();
-
-        Pedido pedido = new Pedido(localDateTime, status, Collections.emptyList());
-
-        ItemPedidoRequest.setPedido(pedido);
-        List<ItemPedido> itemPedidos = itemPedidoRequests.stream().map(item -> item.toItemPedido(item)).toList();
-
-        pedido.setItemPedidoList(itemPedidos);
-
-        pedidoRepository.save(pedido);
-
+        Pedido pedido = pedidoRequest.toPedido();
+        pedidoService.savePedido(pedido);
     }
 
-    @PutMapping(path = "/pedido", consumes = "application/json")
+    @PutMapping(consumes = "application/json")
     @ResponseBody
     public ResponseEntity<PedidoResponse> updatePedido(@RequestBody PedidoRequest pedido){
-        Optional<Pedido> pedidoToUpdate = pedidoRepository.findById(pedido.getId());
+        Optional<Pedido> pedidoToUpdate = pedidoService.getPedido(pedido.getId());
 
         if(!pedidoToUpdate.isEmpty()) {
             pedidoToUpdate.get().updatePedido(pedido);
-            pedidoRepository.save(pedidoToUpdate.get());
+            pedidoService.savePedido(pedidoToUpdate.get());
+            return ResponseEntity.ok().body(new PedidoResponse(pedidoToUpdate.get()));
         }
-
-        return ResponseEntity.ok().body(new PedidoResponse(pedidoToUpdate.get()));
+        return null;
     }
 
-    @DeleteMapping(path = "/pedido")
+    @PutMapping(path = "/pay")
+    @ResponseBody
+    public void payPedido(@RequestBody PaymentRequest paymentRequest) {
+        pedidoService.payPedido(paymentRequest.getPedidoId(), paymentRequest.toStatusPedido());
+    }
+
+    @DeleteMapping
     @ResponseBody
     public void deletePedido(@RequestParam Long id) {
-        pedidoRepository.deleteById(id);
+        pedidoService.deletePedido(id);
     }
 }

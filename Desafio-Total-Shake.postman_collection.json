@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"dateTime\": \"2016-03-04T10:15:30\",\n    \"status\": \"PAGO\",\n    \"itens\": [{\n        \"quantidade\": 1,\n        \"descricao\": \"texto\"\n    }, {\n        \"quantidade\": 2,\n        \"descricao\": \"mucho texto\"\n    }]\n}",
+					"raw": "{\n    \"dateTime\": \"2016-03-04T10:15:30\",\n    \"status\": \"PRONTO\",\n    \"itens\": [{\n        \"quantidade\": 1,\n        \"descricao\": \"texto\"\n    }, {\n        \"quantidade\": 2,\n        \"descricao\": \"mucho texto\"\n    }]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -185,8 +185,65 @@
 		{
 			"name": "Delete Item",
 			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/item/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"item",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"CONFIRMADO\",\n    \"pedidoId\": 1,\n    \"valor\": 2,\n    \"nome\": \"foo\",\n    \"numero\": \"foo\",\n    \"expiracao\": \"foo\",\n    \"codigo\": \"foo\",\n    \"formaDePagamento\": \"PIX\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8010/payments/",
+					"host": [
+						"localhost"
+					],
+					"port": "8010",
+					"path": [
+						"payments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[API-Gateway] Get Pedido",
+			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "localhost:8022/",
+					"host": [
+						"localhost"
+					],
+					"port": "8022",
+					"path": [
+						""
+					]
+				}
 			},
 			"response": []
 		}

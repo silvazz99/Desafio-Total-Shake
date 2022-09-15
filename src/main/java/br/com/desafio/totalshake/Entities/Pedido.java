@@ -1,7 +1,9 @@
 package br.com.desafio.totalshake.Entities;
 
 
+import br.com.desafio.totalshake.DTO.ItemPedidoRequest;
 import br.com.desafio.totalshake.DTO.PedidoRequest;
+import br.com.desafio.totalshake.Domain.exceptions.ErroCriacaoPedido;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,6 +28,17 @@ public class Pedido {
         this.dateTime = dateTime;
         this.status = status;
         this.itemPedidoList = itens;
+    }
+
+    public Pedido(String dateTime, String status, List<ItemPedidoRequest> itemPedidoRequestList) {
+        try {
+            this.dateTime = LocalDateTime.parse(dateTime);
+            this.status = Status.valueOf(status);
+            this.itemPedidoList = itemPedidoRequestList.stream().map(item -> item.toItemPedido(item)).toList();
+        } catch (Exception e) {
+            throw new ErroCriacaoPedido();
+        }
+
     }
 
     public void updatePedido(PedidoRequest pedidoRequest) {

@@ -1,0 +1,9 @@
+[submodule "payments-api-shake"]
+	path = payments-api-shake
+	url = https://github.com/silvazz99/payments-api-shake
+[submodule "api-gateway"]
+	path = api-gateway
+	url = git@github.com:silvazz99/api-gateway.git
+[submodule "discovery-server-shake"]
+	path = discovery-server-shake
+	url = https://github.com/silvazz99/discovery-server-shake
